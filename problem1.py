@@ -32,7 +32,57 @@ def calculate_trip_fare(distance_km: float, is_rush_hour: bool = False, passenge
           - 乘客优惠（"child" 和 "senior"）Passenger discounts ("child" and "senior")
           - 高峰时段与优惠组合Combination of rush hour and discount
           - 异常情况（负距离和无效乘客类型）Exceptions (negative distance and invalid passenger type)
+    普通成人行程：3 + (5 - 2) * 1.5 = 7.5。
+    >>> calculate_trip_fare(5.0)
+    7.5
 
+    零距离价格。
+    >>> calculate_trip_fare(0.0)
+    3.0
+
+    基础范围内的价格
+    >>> calculate_trip_fare(1.5)
+    3.0
+
+    刚好 2 公里
+    >>> calculate_trip_fare(2.0)
+    3.0
+
+    超过 2 公里收取额外费用
+    >>> calculate_trip_fare(2.1)
+    3.15
+
+    高峰时段成人票价：15 * 1.25 = 18.75
+    >>> calculate_trip_fare(10.0, is_rush_hour=True)
+    18.75
+
+    儿童支付普通票价的 50%
+    >>> calculate_trip_fare(5.0, passenger_type="child")
+    3.75
+
+    老人支付普通票价的 70%
+    >>> calculate_trip_fare(5.0, passenger_type="senior")
+    5.25
+
+    高峰加价与儿童优惠叠加，结果保留两位小数
+    >>> calculate_trip_fare(10.0, is_rush_hour=True, passenger_type="child")
+    9.38
+
+    高峰加价与老人优惠叠加
+    >>> calculate_trip_fare(5.0, is_rush_hour=True, passenger_type="senior")
+    6.56
+
+    负距离应抛出 ValueError
+    >>> calculate_trip_fare(-1.0)
+    Traceback (most recent call last):
+        ...
+    ValueError: distance_km cannot be negative
+
+    无效乘客类型应抛出 ValueError
+    >>> calculate_trip_fare(5.0, passenger_type="student")
+    Traceback (most recent call last):
+        ...
+    ValueError: invalid passenger_type: must be 'adult', 'child', or 'senior'
     >>> calculate_trip_fare(1.5)
     3.0
     >>> # TODO: Add more doctests here (在这里添加更多 doctests)
